@@ -1,16 +1,45 @@
 # Visio-Voice
-Visio Voice leverages the Inception V3 LSTM encoder-decoder model to convert visual input into descriptive text. This advanced AI system processes images, extracts features, and generates accurate, human-like descriptions, enhancing accessibility and automated image captioning capabilities.
 
-![Architecture](https://github.com/user-attachments/assets/3840641b-cbc9-4f18-ac86-9602e4159b07)
+Visio Voice now uses your **actual trained model artifacts** (encoder + decoder + tokenizer) through a FastAPI backend, while `docs/` remains a GitHub Pages frontend.
 
-![Inception V3](https://github.com/user-attachments/assets/3243c962-f2e3-48af-889f-04e419ae2fc7)
+## Live frontend (GitHub Pages)
 
-![LSTM Architecture](https://github.com/user-attachments/assets/89ff32e7-8e31-4081-972b-86cd76ce851e)
+- https://guru3697.github.io/Visio-Voice/
 
-# Output
+> Important: GitHub Pages is static-only. Your trained TensorFlow model must run on a backend service.
 
-![image](https://github.com/user-attachments/assets/2f682449-38b6-4760-8e71-d5915f53cd22)
+## Backend setup (required for trained model inference)
 
-![image](https://github.com/user-attachments/assets/593fc5c0-689d-469f-9b8a-392a1d516a39)
+Place your trained artifacts here:
 
-![image](https://github.com/user-attachments/assets/e273b896-74e1-49b7-952e-41a0289f88ca)
+- `backend/model/encoder/`
+- `backend/model/decoder/`
+- `backend/model/tokenizer.pkl`
+
+Then run:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
+uvicorn backend.app:app --host 0.0.0.0 --port 8001
+```
+
+API endpoint used by frontend:
+
+- `POST http://127.0.0.1:8001/caption`
+
+## Frontend local preview
+
+```bash
+python3 -m http.server 8000 --directory docs
+```
+
+Open `http://localhost:8000`.
+
+## Deploying without errors
+
+1. Deploy backend (Render/Railway/EC2/etc.) with your model files in `backend/model/`.
+2. Update `API_BASE_URL` in `docs/main.js` to your deployed backend URL.
+3. Push to `main`/`master`/`work` and let GitHub Actions deploy Pages.
+4. In GitHub Settings → Pages, ensure Source is **GitHub Actions**.
