@@ -1,71 +1,56 @@
-import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
-
-env.allowLocalModels = false;
+import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
 
 // Elements
-const fileInput = document.getElementById('fileInput');
-const camera = document.getElementById('camera');
-const preview = document.getElementById('preview');
-const canvas = document.getElementById('canvas');
-const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById("fileInput");
+const dropZone = document.getElementById("dropZone");
+const preview = document.getElementById("preview");
 
-const startCameraBtn = document.getElementById('startCamera');
-const capturePhotoBtn = document.getElementById('capturePhoto');
+const camera = document.getElementById("camera");
+const canvas = document.getElementById("canvas");
 
-const generateBtn = document.getElementById('generate');
-const speakBtn = document.getElementById('speak');
-const stopSpeakBtn = document.getElementById('stopSpeak');
+const startCameraBtn = document.getElementById("startCamera");
+const capturePhotoBtn = document.getElementById("capturePhoto");
 
-const statusEl = document.getElementById('status');
-const captionEl = document.getElementById('caption');
+const generateBtn = document.getElementById("generate");
+const speakBtn = document.getElementById("speak");
+const stopSpeakBtn = document.getElementById("stopSpeak");
+
+const statusEl = document.getElementById("status");
+const captionEl = document.getElementById("caption");
 
 // State
-let stream = null;
+let model;
 let imageReady = false;
-let model = null;
-let currentCaption = '';
+let captionText = "";
+let stream = null;
 
-// -------------------- STATUS --------------------
-function setStatus(message, isError = false) {
-  statusEl.textContent = message;
-  statusEl.classList.toggle('error', isError);
-}
-
-// -------------------- IMAGE SETTER --------------------
-function setImageFromDataUrl(dataUrl) {
-  preview.src = dataUrl;
-
-  imageReady = true;
-  generateBtn.disabled = false;
-
-  captionEl.textContent = 'Caption will appear here.';
-  currentCaption = '';
-
-  speakBtn.disabled = true;
-  stopSpeakBtn.disabled = true;
-}
-
-// -------------------- FILE HANDLER --------------------
-function handleFile(file) {
-  if (!file || !file.type.startsWith("image/")) {
-    setStatus('Please select a valid image.', true);
-    return;
-  }
+// ---------------- IMAGE LOAD ----------------
+function loadImage(file) {
+  if (!file || !file.type.startsWith("image/")) return;
 
   const reader = new FileReader();
   reader.onload = () => {
-    setImageFromDataUrl(reader.result);
-    setStatus('Image loaded successfully.');
+    preview.src = reader.result;
+    imageReady = true;
+    generateBtn.disabled = false;
+
+    captionEl.textContent = "Caption will appear here";
+    captionText = "";
+
+    speakBtn.disabled = true;
+    stopSpeakBtn.disabled = true;
+
+    statusEl.textContent = "Image loaded ✅";
   };
   reader.readAsDataURL(file);
 }
 
-// -------------------- FILE INPUT --------------------
+// File input
 fileInput.addEventListener("change", (e) => {
-  handleFile(e.target.files[0]);
+  loadImage(e.target.files[0]);
 });
 
-// -------------------- DRAG & DROP --------------------
+// Drag & Drop
 dropZone.addEventListener("dragover", (e) => {
   e.preventDefault();
   dropZone.classList.add("dragover");
@@ -79,131 +64,89 @@ dropZone.addEventListener("drop", (e) => {
   e.preventDefault();
   dropZone.classList.remove("dragover");
 
-  const file = e.dataTransfer.files[0];
-  handleFile(file);
+  loadImage(e.dataTransfer.files[0]);
 });
 
-// -------------------- PASTE --------------------
+// Paste
 document.addEventListener("paste", (e) => {
-  const items = e.clipboardData.items;
-
-  for (let item of items) {
-    if (item.type.startsWith("image/")) {
-      const file = item.getAsFile();
-      handleFile(file);
-      break;
+  for (let item of e.clipboardData.items) {
+    if (item.type.startsWith("image")) {
+      loadImage(item.getAsFile());
     }
   }
 });
 
-// -------------------- CAMERA --------------------
-startCameraBtn.addEventListener('click', async () => {
+// ---------------- CAMERA ----------------
+startCameraBtn.addEventListener("click", async () => {
   try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' },
-      audio: false
-    });
-
+    stream = await navigator.mediaDevices.getUserMedia({ video: true });
     camera.srcObject = stream;
     capturePhotoBtn.disabled = false;
-
-    setStatus('Camera started.');
-  } catch (error) {
-    setStatus(`Camera error: ${error.message}`, true);
+    statusEl.textContent = "Camera started";
+  } catch (err) {
+    statusEl.textContent = "Camera error: " + err.message;
   }
 });
 
-capturePhotoBtn.addEventListener('click', () => {
-  if (!camera.videoWidth) {
-    setStatus('Camera not ready.', true);
-    return;
-  }
-
+capturePhotoBtn.addEventListener("click", () => {
   canvas.width = camera.videoWidth;
   canvas.height = camera.videoHeight;
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   ctx.drawImage(camera, 0, 0);
 
-  setImageFromDataUrl(canvas.toDataURL('image/png'));
-  setStatus('Photo captured.');
+  preview.src = canvas.toDataURL("image/png");
+  imageReady = true;
+  generateBtn.disabled = false;
+
+  statusEl.textContent = "Photo captured";
 });
 
-// -------------------- MODEL --------------------
-async function ensureModel() {
-  if (model) return model;
-
-  setStatus('Loading AI model (30-60s first time)...');
-
-  try {
-    model = await pipeline('image-to-text', 'Xenova/vit-gpt2-image-captioning');
-    setStatus('Model ready.');
-    return model;
-  } catch (error) {
-    setStatus(`Model load failed: ${error.message}`, true);
-  }
+// ---------------- MODEL ----------------
+async function loadModel() {
+  statusEl.textContent = "Loading AI model (30s)...";
+  model = await pipeline("image-to-text", "Xenova/vit-gpt2-image-captioning");
+  statusEl.textContent = "Model ready 🚀";
 }
+loadModel();
 
-// -------------------- GENERATE CAPTION --------------------
-generateBtn.addEventListener('click', async () => {
-  if (!imageReady || !preview.src) {
-    setStatus('Upload or capture an image first.', true);
+// ---------------- GENERATE ----------------
+generateBtn.addEventListener("click", async () => {
+  if (!imageReady) {
+    statusEl.textContent = "❌ Upload or capture image first";
     return;
   }
 
-  generateBtn.disabled = true;
-  setStatus('Generating caption...');
+  statusEl.textContent = "Generating...";
 
   try {
-    const captioner = await ensureModel();
-    const output = await captioner(preview.src);
+    const result = await model(preview.src);
+    captionText = result[0].generated_text;
 
-    const text = output?.[0]?.generated_text?.trim();
-
-    if (!text) throw new Error('No caption generated.');
-
-    currentCaption = text;
-    captionEl.textContent = text;
+    captionEl.textContent = captionText;
 
     speakBtn.disabled = false;
     stopSpeakBtn.disabled = false;
 
-    setStatus('Caption generated.');
-  } catch (error) {
-    setStatus(`Error: ${error.message}`, true);
-  } finally {
-    generateBtn.disabled = false;
+    statusEl.textContent = "Done ✅";
+  } catch (err) {
+    statusEl.textContent = "Error: " + err.message;
   }
 });
 
-// -------------------- TEXT TO SPEECH --------------------
-speakBtn.addEventListener('click', () => {
-  if (!currentCaption) {
-    setStatus('Generate caption first.', true);
-    return;
-  }
+// ---------------- AUDIO ----------------
+speakBtn.addEventListener("click", () => {
+  if (!captionText) return;
 
-  window.speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(currentCaption);
-  utterance.rate = 1;
-  utterance.pitch = 1;
-
-  window.speechSynthesis.speak(utterance);
-  setStatus('Playing audio...');
+  const speech = new SpeechSynthesisUtterance(captionText);
+  speechSynthesis.speak(speech);
 });
 
-stopSpeakBtn.addEventListener('click', () => {
-  window.speechSynthesis.cancel();
-  setStatus('Audio stopped.');
+stopSpeakBtn.addEventListener("click", () => {
+  speechSynthesis.cancel();
 });
 
-// -------------------- CLEANUP --------------------
-window.addEventListener('beforeunload', () => {
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-  }
+// Cleanup
+window.addEventListener("beforeunload", () => {
+  if (stream) stream.getTracks().forEach(t => t.stop());
 });
-
-// Load model initially
-ensureModel();
