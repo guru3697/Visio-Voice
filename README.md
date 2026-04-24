@@ -1,22 +1,18 @@
 # Visio-Voice
 
-Visio Voice now uses your **actual trained model artifacts** (encoder + decoder + tokenizer) through a FastAPI backend, while `docs/` remains a GitHub Pages frontend.
+Visio Voice uses your trained image-caption model through a FastAPI backend, and a GitHub Pages frontend (`docs/`) for upload/camera + caption + audio playback.
 
 ## Live frontend (GitHub Pages)
 
 - https://guru3697.github.io/Visio-Voice/
 
-> Important: GitHub Pages is static-only. Your trained TensorFlow model must run on a backend service.
-
-## Backend setup (required for trained model inference)
-
-Place your trained artifacts here:
+## 1) Put trained artifacts in these exact paths
 
 - `backend/model/encoder/`
 - `backend/model/decoder/`
 - `backend/model/tokenizer.pkl`
 
-Then run:
+## 2) Run backend locally
 
 ```bash
 python3 -m venv .venv
@@ -25,21 +21,31 @@ pip install -r backend/requirements.txt
 uvicorn backend.app:app --host 0.0.0.0 --port 8001
 ```
 
-API endpoint used by frontend:
+Check health:
 
-- `POST http://127.0.0.1:8001/caption`
+```bash
+curl http://127.0.0.1:8001/health
+```
 
-## Frontend local preview
+## 3) Run frontend locally
 
 ```bash
 python3 -m http.server 8000 --directory docs
 ```
 
-Open `http://localhost:8000`.
+Open `http://localhost:8000`, set backend URL to `http://127.0.0.1:8001`, click **Save URL**, then **Test API**.
 
-## Deploying without errors
+## 4) For GitHub Pages usage (avoid "Failed to fetch")
 
-1. Deploy backend (Render/Railway/EC2/etc.) with your model files in `backend/model/`.
-2. Update `API_BASE_URL` in `docs/main.js` to your deployed backend URL.
-3. Push to `main`/`master`/`work` and let GitHub Actions deploy Pages.
-4. In GitHub Settings → Pages, ensure Source is **GitHub Actions**.
+If frontend is opened on `https://guru3697.github.io/Visio-Voice/`, backend URL must be **HTTPS**.
+
+- ✅ Good: `https://your-backend-domain.com`
+- ❌ Blocked by browser (mixed content): `http://127.0.0.1:8001`
+
+Deploy backend on a cloud host with HTTPS (Render, Railway, etc.), then in the UI set that HTTPS URL and click **Test API**.
+
+## 5) GitHub Pages deploy
+
+1. Push branch (`main`/`master`/`work`).
+2. In repository **Settings → Pages**, set **Source = GitHub Actions**.
+3. Wait for the `Deploy static site to GitHub Pages` workflow.

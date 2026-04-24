@@ -11,10 +11,20 @@
       <header>
         <h1>Visio-Voice</h1>
         <p>
-          Upload or capture an image and generate an AI caption with audio playback
-          directly in your browser.
+          Upload or capture an image and generate an AI caption with audio playback.
+          This UI calls your trained-model backend API.
         </p>
       </header>
+
+      <section class="card">
+        <h2>0) Backend API setup</h2>
+        <p class="small">Set your backend base URL (must be HTTPS when using GitHub Pages).</p>
+        <div class="api-row">
+          <input id="apiBaseUrl" type="url" placeholder="https://your-backend-domain.com" />
+          <button id="saveApiUrl" class="button secondary" type="button">Save URL</button>
+          <button id="testApi" class="button secondary" type="button">Test API</button>
+        </div>
+      </section>
 
       <section class="card">
         <h2>1) Choose image source</h2>
@@ -54,8 +64,8 @@
       <section class="card small">
         <h2>Deployment note</h2>
         <p>
-          This page is static and GitHub Pages-compatible. Caption generation comes
-          from your trained model through the FastAPI backend API.
+          GitHub Pages hosts only this frontend. Your trained model inference runs
+          in the FastAPI backend.
         </p>
       </section>
     </main>
