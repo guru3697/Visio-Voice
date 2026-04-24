@@ -26,7 +26,11 @@ This repository now includes a GitHub Pages-ready static site under `docs/` and 
 2. In **Settings → Pages**, set **Source** to **GitHub Actions**.
 3. Run (or re-run) the `Deploy static site to GitHub Pages` workflow.
 4. Your site will be available at:
-   - `https://<your-github-username>.github.io/Visio-Voice/` (project site)
+   - `https://guru3697.github.io/Visio-Voice/` (project site)
+
+### Live URL
+
+- **GitHub Pages:** https://guru3697.github.io/Visio-Voice/
 
 ### Local preview
 
