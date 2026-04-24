@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visio-Voice | Live Image Caption + Audio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Visio-Voice</h1>
+        <p>
+          Upload or capture an image and generate an AI caption with audio playback
+          directly in your browser.
+        </p>
+      </header>
+
+      <section class="card">
+        <h2>1) Choose image source</h2>
+        <div class="actions">
+          <label class="button">
+            Upload Photo
+            <input id="fileInput" type="file" accept="image/*" hidden />
+          </label>
+          <button id="startCamera" class="button secondary" type="button">Use Camera</button>
+          <button id="capturePhoto" class="button secondary" type="button" disabled>Capture</button>
+        </div>
+
+        <div class="media-grid">
+          <div>
+            <p class="label">Camera preview</p>
+            <video id="camera" autoplay playsinline muted></video>
+          </div>
+          <div id="dropZone" class="drop-zone">
+            <p>You can Drag & Drop or paste (Ctrl+V) image here</p>
+            <img id="preview" alt="Selected image preview" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2) Generate caption</h2>
+        <div class="actions">
+          <button id="generate" class="button" type="button" disabled>Generate Caption</button>
+          <button id="speak" class="button secondary" type="button" disabled>Play Audio</button>
+          <button id="stopSpeak" class="button secondary" type="button" disabled>Stop Audio</button>
+        </div>
+
+        <p id="status" class="status">Model not loaded yet.</p>
+        <p id="caption" class="caption">Caption will appear here.</p>
+      </section>
+
+    </main>
+
+    <canvas id="canvas" hidden></canvas>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
