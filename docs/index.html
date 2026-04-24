@@ -28,6 +28,10 @@
         </div>
 
         <div class="media-grid">
+          <div id="dropZone" class="drop-zone">
+            <p>Drag & Drop image here or paste (Ctrl+V)</p>
+            <img id="preview" alt="Selected image preview" />
+          </div>
           <div>
             <p class="label">Camera preview</p>
             <video id="camera" autoplay playsinline muted></video>
@@ -51,13 +55,6 @@
         <p id="caption" class="caption">Caption will appear here.</p>
       </section>
 
-      <section class="card small">
-        <h2>Deployment note</h2>
-        <p>
-          This page is static and GitHub Pages-compatible. AI inference runs in-browser
-          using <code>@xenova/transformers</code>.
-        </p>
-      </section>
     </main>
 
     <canvas id="canvas" hidden></canvas>
