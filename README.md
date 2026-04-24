@@ -1,38 +1,30 @@
 # Visio-Voice
 
-Visio Voice leverages the Inception V3 LSTM encoder-decoder model to convert visual input into descriptive text. This advanced AI system processes images, extracts features, and generates accurate, human-like descriptions, enhancing accessibility and automated image captioning capabilities.
+Visio Voice is an image-to-caption project. This repository now includes a fully static GitHub Pages web app that lets you:
 
-![Architecture](https://github.com/user-attachments/assets/3840641b-cbc9-4f18-ac86-9602e4159b07)
+- Upload an image **or** capture one from the camera.
+- Generate an AI text caption in-browser.
+- Play the caption as audio using browser speech synthesis.
 
-![Inception V3](https://github.com/user-attachments/assets/3243c962-f2e3-48af-889f-04e419ae2fc7)
+## Live GitHub Pages URL
 
-![LSTM Architecture](https://github.com/user-attachments/assets/89ff32e7-8e31-4081-972b-86cd76ce851e)
+- **https://guru3697.github.io/Visio-Voice/**
 
-## Output
+## GitHub Pages deployment status (fix for 404)
 
-![image](https://github.com/user-attachments/assets/2f682449-38b6-4760-8e71-d5915f53cd22)
+A 404 on GitHub Pages usually means the Pages workflow has not deployed successfully yet (or Pages source is not set correctly).
 
-![image](https://github.com/user-attachments/assets/593fc5c0-689d-469f-9b8a-392a1d516a39)
+This repo includes `.github/workflows/deploy-pages.yml` to deploy the `docs/` app.
 
-![image](https://github.com/user-attachments/assets/e273b896-74e1-49b7-952e-41a0289f88ca)
+### Required one-time GitHub setup
 
-## GitHub Pages hosting
+1. Open **Repository Settings → Pages**.
+2. Under **Build and deployment**, choose **Source: GitHub Actions**.
+3. Push changes to one of these branches: `main`, `master`, or `work`.
+4. Wait for the **Deploy static site to GitHub Pages** workflow to finish.
+5. Re-open: `https://guru3697.github.io/Visio-Voice/`
 
-This repository now includes a GitHub Pages-ready static site under `docs/` and an automated deployment workflow at `.github/workflows/deploy-pages.yml`.
-
-### How to publish
-
-1. Push the repository to GitHub on the `main` branch.
-2. In **Settings → Pages**, set **Source** to **GitHub Actions**.
-3. Run (or re-run) the `Deploy static site to GitHub Pages` workflow.
-4. Your site will be available at:
-   - `https://guru3697.github.io/Visio-Voice/` (project site)
-
-### Live URL
-
-- **GitHub Pages:** https://guru3697.github.io/Visio-Voice/
-
-### Local preview
+## Local preview
 
 From repository root:
 
@@ -40,4 +32,13 @@ From repository root:
 python3 -m http.server 8000 --directory docs
 ```
 
-Then open `http://localhost:8000`.
+Then open:
+
+- `http://localhost:8000`
+
+## Project files
+
+- `docs/index.html` – UI for upload/camera + caption + audio controls.
+- `docs/main.js` – AI inference and interaction logic.
+- `docs/styles.css` – Styling.
+- `.github/workflows/deploy-pages.yml` – GitHub Pages deployment workflow.

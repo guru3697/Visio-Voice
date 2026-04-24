@@ -3,55 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visio-Voice</title>
+    <title>Visio-Voice | Live Image Caption + Audio</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="hero">
-      <h1>Visio-Voice</h1>
-      <p>
-        An image-captioning project using an InceptionV3 + LSTM encoder-decoder
-        pipeline for accessible visual understanding.
-      </p>
-      <a class="button" href="https://github.com/guru3697/Visio-Voice" target="_blank" rel="noopener noreferrer">View Repository</a>
-    </header>
-
-    <main>
-      <section>
-        <h2>Project Overview</h2>
+    <main class="container">
+      <header>
+        <h1>Visio-Voice</h1>
         <p>
-          Visio-Voice extracts image features with InceptionV3 and generates
-          natural-language captions with an LSTM decoder. The project focuses on
-          producing clear, human-readable image descriptions.
+          Upload or capture an image and generate an AI caption with audio playback
+          directly in your browser.
         </p>
+      </header>
+
+      <section class="card">
+        <h2>1) Choose image source</h2>
+        <div class="actions">
+          <label class="button">
+            Upload Photo
+            <input id="fileInput" type="file" accept="image/*" hidden />
+          </label>
+          <button id="startCamera" class="button secondary" type="button">Use Camera</button>
+          <button id="capturePhoto" class="button secondary" type="button" disabled>Capture</button>
+        </div>
+
+        <div class="media-grid">
+          <div>
+            <p class="label">Camera preview</p>
+            <video id="camera" autoplay playsinline muted></video>
+          </div>
+          <div>
+            <p class="label">Selected image</p>
+            <img id="preview" alt="Selected image preview" />
+          </div>
+        </div>
       </section>
 
-      <section>
-        <h2>Architecture</h2>
-        <ul>
-          <li><strong>Encoder:</strong> InceptionV3 visual feature extractor</li>
-          <li><strong>Decoder:</strong> LSTM sequence generator</li>
-          <li><strong>Task:</strong> Image captioning / text generation from image content</li>
-        </ul>
+      <section class="card">
+        <h2>2) Generate caption</h2>
+        <div class="actions">
+          <button id="generate" class="button" type="button" disabled>Generate Caption</button>
+          <button id="speak" class="button secondary" type="button" disabled>Play Audio</button>
+          <button id="stopSpeak" class="button secondary" type="button" disabled>Stop Audio</button>
+        </div>
+
+        <p id="status" class="status">Model not loaded yet.</p>
+        <p id="caption" class="caption">Caption will appear here.</p>
       </section>
 
-      <section>
-        <h2>Sample Output</h2>
-        <img src="../Visio%20Voice%20Output.png" alt="Visio-Voice sample output" />
-      </section>
-
-      <section>
-        <h2>Notebooks</h2>
-        <p>Explore implementation notebooks in the repository root:</p>
-        <ul>
-          <li><code>Image_To_Audio.ipynb</code></li>
-          <li><code>Image_to_audio_Gradio.ipynb</code></li>
-        </ul>
+      <section class="card small">
+        <h2>Deployment note</h2>
+        <p>
+          This page is static and GitHub Pages-compatible. AI inference runs in-browser
+          using <code>@xenova/transformers</code>.
+        </p>
       </section>
     </main>
 
-    <footer>
-      <p>Built for GitHub Pages deployment.</p>
-    </footer>
+    <canvas id="canvas" hidden></canvas>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>
