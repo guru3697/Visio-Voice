@@ -11,20 +11,10 @@
       <header>
         <h1>Visio-Voice</h1>
         <p>
-          Upload or capture an image and generate an AI caption with audio playback.
-          This UI calls your trained-model backend API.
+          Upload or capture an image and generate an AI caption with audio playback
+          using your trained model.
         </p>
       </header>
-
-      <section class="card">
-        <h2>0) Backend API setup</h2>
-        <p class="small">Set your backend base URL (must be HTTPS when using GitHub Pages).</p>
-        <div class="api-row">
-          <input id="apiBaseUrl" type="url" placeholder="https://your-backend-domain.com" />
-          <button id="saveApiUrl" class="button secondary" type="button">Save URL</button>
-          <button id="testApi" class="button secondary" type="button">Test API</button>
-        </div>
-      </section>
 
       <section class="card">
         <h2>1) Choose image source</h2>
@@ -57,16 +47,8 @@
           <button id="stopSpeak" class="button secondary" type="button" disabled>Stop Audio</button>
         </div>
 
-        <p id="status" class="status">Model not loaded yet.</p>
+        <p id="status" class="status">Ready.</p>
         <p id="caption" class="caption">Caption will appear here.</p>
-      </section>
-
-      <section class="card small">
-        <h2>Deployment note</h2>
-        <p>
-          GitHub Pages hosts only this frontend. Your trained model inference runs
-          in the FastAPI backend.
-        </p>
       </section>
     </main>
 

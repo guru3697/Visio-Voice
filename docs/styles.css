@@ -39,21 +39,6 @@ header p { color: var(--muted); margin-top: 0; }
   gap: 0.7rem;
 }
 
-.api-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 0.6rem;
-}
-
-#apiBaseUrl {
-  width: 100%;
-  border-radius: 10px;
-  border: 1px solid #445a92;
-  background: #0a1229;
-  color: var(--text);
-  padding: 0.6rem 0.75rem;
-}
-
 .button {
   border: 0;
   border-radius: 10px;
@@ -109,16 +94,6 @@ img {
   font-weight: 600;
 }
 
-.small {
-  color: var(--muted);
-}
-
 .error {
   color: var(--danger);
-}
-
-@media (max-width: 720px) {
-  .api-row {
-    grid-template-columns: 1fr;
-  }
 }

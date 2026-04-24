@@ -9,10 +9,14 @@ import numpy as np
 import tensorflow as tf
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel
 
 BASE_DIR = Path(__file__).resolve().parent
+ROOT_DIR = BASE_DIR.parent
+DOCS_DIR = ROOT_DIR / "docs"
 MODEL_DIR = BASE_DIR / "model"
 ENCODER_PATH = MODEL_DIR / "encoder"
 DECODER_PATH = MODEL_DIR / "decoder"
@@ -133,3 +137,21 @@ async def caption(file: UploadFile = File(...)) -> CaptionResponse:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=f"Caption generation failed: {exc}") from exc
+
+
+app.mount("/assets", StaticFiles(directory=DOCS_DIR), name="assets")
+
+
+@app.get("/")
+def root() -> FileResponse:
+    return FileResponse(DOCS_DIR / "index.html")
+
+
+@app.get("/main.js")
+def frontend_js() -> FileResponse:
+    return FileResponse(DOCS_DIR / "main.js", media_type="application/javascript")
+
+
+@app.get("/styles.css")
+def frontend_css() -> FileResponse:
+    return FileResponse(DOCS_DIR / "styles.css", media_type="text/css")

@@ -1,51 +1,32 @@
 # Visio-Voice
 
-Visio Voice uses your trained image-caption model through a FastAPI backend, and a GitHub Pages frontend (`docs/`) for upload/camera + caption + audio playback.
+Visio Voice now runs as a single app: backend + frontend together.
 
-## Live frontend (GitHub Pages)
+- Upload/capture image
+- Generate caption using your trained model artifacts
+- Play caption audio in browser
 
-- https://guru3697.github.io/Visio-Voice/
+## Required trained artifacts (already wired in code)
 
-## 1) Put trained artifacts in these exact paths
+Place files in:
 
 - `backend/model/encoder/`
 - `backend/model/decoder/`
 - `backend/model/tokenizer.pkl`
 
-## 2) Run backend locally
+## Run (single command)
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
 uvicorn backend.app:app --host 0.0.0.0 --port 8001
 ```
 
-Check health:
+Open:
 
-```bash
-curl http://127.0.0.1:8001/health
-```
+- `http://127.0.0.1:8001`
 
-## 3) Run frontend locally
+No separate frontend server or API URL setup is needed.
 
-```bash
-python3 -m http.server 8000 --directory docs
-```
+## Endpoints
 
-Open `http://localhost:8000`, set backend URL to `http://127.0.0.1:8001`, click **Save URL**, then **Test API**.
-
-## 4) For GitHub Pages usage (avoid "Failed to fetch")
-
-If frontend is opened on `https://guru3697.github.io/Visio-Voice/`, backend URL must be **HTTPS**.
-
-- ✅ Good: `https://your-backend-domain.com`
-- ❌ Blocked by browser (mixed content): `http://127.0.0.1:8001`
-
-Deploy backend on a cloud host with HTTPS (Render, Railway, etc.), then in the UI set that HTTPS URL and click **Test API**.
-
-## 5) GitHub Pages deploy
-
-1. Push branch (`main`/`master`/`work`).
-2. In repository **Settings → Pages**, set **Source = GitHub Actions**.
-3. Wait for the `Deploy static site to GitHub Pages` workflow.
+- `GET /health`
+- `POST /caption`
