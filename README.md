@@ -30,3 +30,14 @@ No separate frontend server or API URL setup is needed.
 
 - `GET /health`
 - `POST /caption`
+
+
+## Troubleshooting
+
+If you see `Unexpected token '<'` or `API returned HTML`, it means the frontend is not hitting the FastAPI `/caption` endpoint.
+
+Use:
+
+- `http://127.0.0.1:8001`
+
+so the page and API are served by the same FastAPI app and your trained model is used.

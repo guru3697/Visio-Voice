@@ -41,6 +41,26 @@ async function fetchWithTimeout(resource, options = {}, timeoutMs = 45000) {
   }
 }
 
+async function parseApiResponse(response) {
+  const contentType = response.headers.get('content-type') || '';
+  const raw = await response.text();
+
+  if (!contentType.includes('application/json')) {
+    if (raw.trim().startsWith('<')) {
+      throw new Error(
+        'API returned HTML instead of JSON. Open the app through FastAPI (http://127.0.0.1:8001) so /caption maps to your trained-model backend.'
+      );
+    }
+    throw new Error('API returned non-JSON response.');
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error('API JSON parse failed.');
+  }
+}
+
 fileInput.addEventListener('change', (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
@@ -106,7 +126,8 @@ generateBtn.addEventListener('click', async () => {
       60000
     );
 
-    const body = await response.json();
+    const body = await parseApiResponse(response);
+
     if (!response.ok) {
       throw new Error(body.detail || `API error (${response.status})`);
     }
