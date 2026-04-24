@@ -19,6 +19,53 @@ let imageReady = false;
 let model = null;
 let currentCaption = '';
 
+function loadImageFromFile(file) {
+  if (!file || !file.type.startsWith("image/")) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const preview = document.getElementById("preview");
+    preview.src = e.target.result;
+
+    document.getElementById("generate").disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("fileInput").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  loadImageFromFile(file);
+});
+const dropZone = document.getElementById("dropZone");
+
+dropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropZone.classList.add("dragover");
+});
+
+dropZone.addEventListener("dragleave", () => {
+  dropZone.classList.remove("dragover");
+});
+
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropZone.classList.remove("dragover");
+
+  const file = e.dataTransfer.files[0];
+  loadImageFromFile(file);
+});
+document.addEventListener("paste", (e) => {
+  const items = e.clipboardData.items;
+
+  for (let item of items) {
+    if (item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+      loadImageFromFile(file);
+      break;
+    }
+  }
+});
+
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
   statusEl.classList.toggle('error', isError);
@@ -129,51 +176,4 @@ window.addEventListener('beforeunload', () => {
 
 ensureModel().catch((error) => {
   setStatus(`Model load failed: ${error.message}`, true);
-});
-
-function loadImageFromFile(file) {
-  if (!file || !file.type.startsWith("image/")) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const preview = document.getElementById("preview");
-    preview.src = e.target.result;
-
-    document.getElementById("generate").disabled = false;
-  };
-  reader.readAsDataURL(file);
-}
-
-document.getElementById("fileInput").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  loadImageFromFile(file);
-});
-const dropZone = document.getElementById("dropZone");
-
-dropZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropZone.classList.add("dragover");
-});
-
-dropZone.addEventListener("dragleave", () => {
-  dropZone.classList.remove("dragover");
-});
-
-dropZone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  dropZone.classList.remove("dragover");
-
-  const file = e.dataTransfer.files[0];
-  loadImageFromFile(file);
-});
-document.addEventListener("paste", (e) => {
-  const items = e.clipboardData.items;
-
-  for (let item of items) {
-    if (item.type.startsWith("image/")) {
-      const file = item.getAsFile();
-      loadImageFromFile(file);
-      break;
-    }
-  }
 });
